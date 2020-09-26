@@ -89,10 +89,14 @@ public class Evaluator {
             if (Operand.isValid(expressionToken)) {
                 // TODO: Implement this.
                 // If token is an operand, push it to operandStack
-                operandStack.push(new Operand(expressionToken));
+                Operand token_operand = new Operand(expressionToken);
+                operandStack.push(token_operand);
             } else {
                 // TODO: Implement this.
-                if(!Operator.create(token).equals(null))
+                if(!Operator.create(expressionToken).equals(null)){
+                    System.out.println("*****invalid token******");
+                    throw new RuntimeException("*****invalid token******");
+                }else
 
             }
         }
