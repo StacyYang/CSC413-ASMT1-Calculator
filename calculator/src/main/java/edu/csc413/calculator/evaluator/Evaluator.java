@@ -3,6 +3,7 @@ package edu.csc413.calculator.evaluator;
 import edu.csc413.calculator.exceptions.InvalidExpressionException;
 import edu.csc413.calculator.operators.Operator;
 
+import java.util.EmptyStackException;
 import java.util.StringTokenizer;
 import java.util.Stack;
 
@@ -93,11 +94,32 @@ public class Evaluator {
                 operandStack.push(token_operand);
             } else {
                 // TODO: Implement this.
-                if(!Operator.create(expressionToken).equals(null)){
+                if(Operator.create(expressionToken) == null){
                     System.out.println("*****invalid token******");
                     throw new RuntimeException("*****invalid token******");
-                }else
+                }else{
+                    Operator token_operator = Operator.create(expressionToken);
+                    if(!operatorStack.empty()){
+                        while(operatorStack.peek().precedence() >= token_operator.precedence()){
+                            Operator topOperator = operatorStack.pop();
+                            Operand op1 = null, op2 = null;
+                            try{
+                                op2 = operandStack.pop();
+                            }catch (EmptyStackException e){
+                                throw new InvalidExpressionException("Operand Stack is empty");
+                            }
 
+                            try{
+                                op1 = operandStack.pop();
+                            }catch (EmptyStackException e){
+                                throw new InvalidExpressionException("Operand Stack is empty");
+                            }
+                            Operand newOpr = topOperator.execute(op1, op2);
+                            operandStack.push(newOpr);
+                        }
+                    }
+                    operatorStack.push(token_operator);
+                }
             }
         }
 
@@ -105,6 +127,33 @@ public class Evaluator {
         // algorithm has been implemented correctly, we should expect to have some number of (partially processed)
         // operands and operators in their corresponding stacks.
         // TODO: Implement this.
-        return 0;
+        while(!operatorStack.isEmpty()){
+            Operator topOperator = operatorStack.pop();
+            Operand op1 = null, op2 = null;
+            try{
+                op2 = operandStack.pop();
+            }catch (EmptyStackException e){
+                throw new InvalidExpressionException("Operand Stack is empty");
+            }
+
+            try{
+                op1 = operandStack.pop();
+            }catch (EmptyStackException e){
+                throw new InvalidExpressionException("Operand Stack is empty");
+            }
+            
+
+            Operand newOpr = topOperator.execute(op1, op2);
+            operandStack.push(newOpr);
+        }
+
+        int finalValue = 0;
+        try{
+            finalValue = operandStack.pop().getValue();
+        }catch(EmptyStackException e){
+            throw new InvalidExpressionException("Operand Stack is empty");
+        }
+
+        return finalValue;
     }
 }
