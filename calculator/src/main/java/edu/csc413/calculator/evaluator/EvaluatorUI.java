@@ -58,6 +58,7 @@ public class EvaluatorUI extends JFrame implements ActionListener {
      */
     public void actionPerformed(ActionEvent actionEventObject) {
         String actionCommand = actionEventObject.getActionCommand();
+        //check if the button is "C" "CE" or "="
         if (actionCommand.equals("C")) {
             String expression = expressionTextField.getText();
             if (!expression.isEmpty()) {

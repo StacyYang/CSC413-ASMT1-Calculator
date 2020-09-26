@@ -1,8 +1,10 @@
 package edu.csc413.calculator.evaluator;
 
 import edu.csc413.calculator.exceptions.InvalidExpressionException;
+import edu.csc413.calculator.operators.Operator;
 
 import java.util.StringTokenizer;
+import java.util.Stack;
 
 /** Class containing functionality for evaluating arithmetic expressions. */
 public class Evaluator {
@@ -69,10 +71,12 @@ public class Evaluator {
      * @throws InvalidExpressionException The expression provided is invalid
      */
     public int evaluateSimpleExpression(String expression) throws InvalidExpressionException {
-        // The third argument is true to indicate that the delimiters should be used as tokens, too.
+        // The third argument is true to indicate that the delimiters should be used as tokens, too. But we'll need to remember to filter out spaces.
         StringTokenizer expressionTokenizer = new StringTokenizer(expression, DELIMITERS, true);
 
         // TODO: Set up data structures needed for operands and operators.
+        Stack <Operand> operandStack = new Stack<>();
+        Stack <Operator> operatorStack = new Stack<>();
 
         while (expressionTokenizer.hasMoreTokens()) {
             // Filter out whitespace.
@@ -84,8 +88,12 @@ public class Evaluator {
             // Check if the token is an operand, operator, or parentheses.
             if (Operand.isValid(expressionToken)) {
                 // TODO: Implement this.
+                // If token is an operand, push it to operandStack
+                operandStack.push(new Operand(expressionToken));
             } else {
                 // TODO: Implement this.
+                if(!Operator.create(token).equals(null))
+
             }
         }
 

@@ -34,6 +34,91 @@ public abstract class Operator {
      */
     public static Operator create(String token) {
         // TODO: Implement.
+
+        if (token.equals("+")) {
+            return new AddOperator();
+        }
+        if (token.equals("-")){
+            return new SubtractOperator();
+        }
+        if (token.equals("*")) {
+            return new MultiplyOperator();
+        }
+        if (token.equals("/")) {
+            return new DivideOperator();
+        }
+        if (token.equals("^")) {
+            return new PowerOperator();
+        }
+
         return null;
     }
 }
+
+class AddOperator extends Operator{
+    //public AddOperator() {}
+
+    @Override
+    public int precedence(){
+        return 1;
+    }
+
+    @Override
+    public Operand execute(Operand lhs, Operand rhs){
+        Operand result = new Operand(lhs.getValue() + rhs.getValue());
+        return result;
+    }
+}
+
+class SubtractOperator extends Operator{
+    @Override
+    public int precedence(){
+        return 1;
+    }
+
+    @Override
+    public Operand execute(Operand lhs, Operand rhs){
+        Operand result = new Operand(lhs.getValue() - rhs.getValue());
+        return result;
+    }
+}
+
+class MultiplyOperator extends Operator{
+    @Override
+    public int precedence(){
+        return 2;
+    }
+
+    @Override
+    public Operand execute(Operand lhs, Operand rhs){
+        Operand result = new Operand(lhs.getValue() * rhs.getValue());
+        return result;
+    }
+}
+
+class DivideOperator extends Operator{
+    @Override
+    public int precedence(){
+        return 2;
+    }
+
+    @Override
+    public Operand execute(Operand lhs, Operand rhs){
+        Operand result = new Operand(lhs.getValue() / rhs.getValue());
+        return result;
+    }
+}
+
+class PowerOperator extends Operator{
+    @Override
+    public int precedence(){
+        return 3;
+    }
+
+    @Override
+    public Operand execute(Operand lhs, Operand rhs){
+        int result = (int) Math.pow(lhs.getValue(), rhs.getValue());
+        return new Operand(result);
+    }
+}
+
