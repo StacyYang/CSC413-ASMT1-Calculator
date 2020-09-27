@@ -95,27 +95,15 @@ public class Evaluator {
             } else {
                 // TODO: Implement this.
                 if(Operator.create(expressionToken) == null){
-                    System.out.println("*****invalid token******");
-                    throw new RuntimeException("*****invalid token******");
+                    System.err.println("Error: invalid token!!!");
+                    throw new InvalidExpressionException("Error: invalid token!!!");
                 }else{
                     Operator token_operator = Operator.create(expressionToken);
-                    if(!operatorStack.empty()){
+                    if(!operatorStack.isEmpty()){
                         while(operatorStack.peek().precedence() >= token_operator.precedence()){
-                            Operator topOperator = operatorStack.pop();
-                            Operand op1 = null, op2 = null;
-                            try{
-                                op2 = operandStack.pop();
-                            }catch (EmptyStackException e){
-                                throw new InvalidExpressionException("Operand Stack is empty");
-                            }
-
-                            try{
-                                op1 = operandStack.pop();
-                            }catch (EmptyStackException e){
-                                throw new InvalidExpressionException("Operand Stack is empty");
-                            }
-                            Operand newOpr = topOperator.execute(op1, op2);
-                            operandStack.push(newOpr);
+                            calculate(operandStack, operatorStack);
+                            // After execution, if operatorStack is empty, exit while loop to avoid EmptyStackException
+                            if(operatorStack.isEmpty()) break;
                         }
                     }
                     operatorStack.push(token_operator);
@@ -128,32 +116,44 @@ public class Evaluator {
         // operands and operators in their corresponding stacks.
         // TODO: Implement this.
         while(!operatorStack.isEmpty()){
-            Operator topOperator = operatorStack.pop();
-            Operand op1 = null, op2 = null;
-            try{
-                op2 = operandStack.pop();
-            }catch (EmptyStackException e){
-                throw new InvalidExpressionException("Operand Stack is empty");
-            }
-
-            try{
-                op1 = operandStack.pop();
-            }catch (EmptyStackException e){
-                throw new InvalidExpressionException("Operand Stack is empty");
-            }
-            
-
-            Operand newOpr = topOperator.execute(op1, op2);
-            operandStack.push(newOpr);
+            calculate(operandStack, operatorStack);
         }
 
         int finalValue = 0;
         try{
             finalValue = operandStack.pop().getValue();
+        }catch(NullPointerException e){
+            System.err.println("Hey, Error: check operandStack");
         }catch(EmptyStackException e){
-            throw new InvalidExpressionException("Operand Stack is empty");
+            System.err.println("Hey, Error: operandStack is empty!!!");
         }
 
         return finalValue;
     }
+
+
+    private void calculate(Stack<Operand> operandStack, Stack<Operator> operatorStack) {
+        Operator topOperator = operatorStack.pop();
+        Operand op2 = null, op1 = null;
+        try{
+            op2 = operandStack.pop();
+        }catch(EmptyStackException e){
+            System.err.println("Hey, Error: operandStack is empty!!!");
+        }catch(NullPointerException e) {
+            System.err.println("Hey, Error: check operandStack");
+        }
+
+        try{
+            op1 = operandStack.pop();
+        }catch(EmptyStackException e){
+            System.err.println("Hey, Error: operandStack is empty!!!");
+        }catch(NullPointerException e) {
+            System.err.println("Hey, Error: check operandStack");
+        }
+
+        Operand newOpr = topOperator.execute(op1, op2);
+        operandStack.push(newOpr);
+    }
+
+
 }
